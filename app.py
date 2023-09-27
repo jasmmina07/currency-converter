@@ -2,7 +2,7 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-usd = 11380.7 # 1 USD = 11380.7 UZS
+USD = 12236.74 # 1 USD = 11380.7 UZS
 
 @app.route('/api/to-usd', methods=['GET'])
 def to_usd():
@@ -24,7 +24,15 @@ def to_usd():
                 "convertedCurrency": "USD"
             }
     """
-    pass
+    r=request.args
+    amount=r.get('amount')
+    uzs=float(amount)/USD
+    return {
+        "amount": f"{amount} USD",
+        "currency": "UZS",
+        "converted": round(float(uzs), max(6-amount.count('0'),2)),
+        "convertedCurrency": "USD"
+    }
 
 @app.route('/api/to-uzs', methods=['GET'])
 def to_uzs():
@@ -46,8 +54,16 @@ def to_uzs():
                 "convertedCurrency": "UZS"
             }
     """
-    pass
+    r=request.args
+    amount=r.get('amount')
+    usd=float(amount)*USD
+    return {
+        "amount": amount,
+        "currency": "UZS",
+        "converted": round(float(usd), max(6-amount.count('0'),2)),
+        "convertedCurrency": "USD"
+    }
     
 
 if __name__ == '__main__':
-    app.run()    
+    app.run(port=5000,debug=True)
